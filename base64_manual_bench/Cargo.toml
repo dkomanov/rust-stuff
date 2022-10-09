@@ -1,0 +1,10 @@
+[package]
+name = "base64_manual_bench"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+base64 = "0.13.0"
+base64_bench = { path = "../base64_bench" }
+base64_jdk = { path = "../base64_jdk" }
+crypto2_base64 = { path = "../crypto2_base64" }
