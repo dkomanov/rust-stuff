@@ -10,32 +10,42 @@ use crypto2_base64 as crypto2;
 
 /*
 method                       input  output  avg time
-baseline                         5       0         0
-base64::encode_config           12      16        75
-base64::encode_config           51      68       108
-base64::encode_config          102     136       177
-base64::encode_config          501     668       616
-base64::encode_config         1002    1336      1054
-crypto2::encode_with_config     12      16        69
-crypto2::encode_with_config     51      68       148
-crypto2::encode_with_config    102     136       267
-crypto2::encode_with_config    501     668      1012
-crypto2::encode_with_config   1002    1336      1979
-base64::decode_config           16      12        80
-base64::decode_config           68      51       118
-base64::decode_config          136     102       169
-base64::decode_config          668     501       574
-base64::decode_config         1336    1002      1140
-base64::decode_config_slice     16      12        85
-base64::decode_config_slice     68      51       112
-base64::decode_config_slice    136     102       161
-base64::decode_config_slice    668     501       560
-base64::decode_config_slice   1336    1002      1071
-crypto2::decode_with_config     16      12        93
-crypto2::decode_with_config     68      51       247
-crypto2::decode_with_config    136     102       466
-crypto2::decode_with_config    668     501      2058
-crypto2::decode_with_config   1336    1002      4096
+baseline                         5       1        24
+base64::encode_config           12      16        76
+base64::encode_config           51      68       120
+base64::encode_config          102     136       184
+base64::encode_config          501     668       584
+base64::encode_config         1002    1336      1078
+crypto2::encode_with_config     12      16        67
+crypto2::encode_with_config     51      68       145
+crypto2::encode_with_config    102     136       274
+crypto2::encode_with_config    501     668      1101
+crypto2::encode_with_config   1002    1336      1977
+jdk::encode                     12      16        70
+jdk::encode                     51      68       138
+jdk::encode                    102     136       262
+jdk::encode                    501     668      1004
+jdk::encode                   1002    1336      1913
+base64::decode_config           16      12        85
+base64::decode_config           68      51       119
+base64::decode_config          136     102       174
+base64::decode_config          668     501       584
+base64::decode_config         1336    1002      1163
+base64::decode_config_slice     16      12        76
+base64::decode_config_slice     68      51       152
+base64::decode_config_slice    136     102       165
+base64::decode_config_slice    668     501       586
+base64::decode_config_slice   1336    1002      1075
+crypto2::decode_with_config     16      12        96
+crypto2::decode_with_config     68      51       239
+crypto2::decode_with_config    136     102       442
+crypto2::decode_with_config    668     501      1934
+crypto2::decode_with_config   1336    1002      4014
+jdk::decode                     16      12        75
+jdk::decode                     68      51       150
+jdk::decode                    136     102       254
+jdk::decode                    668     501      1007
+jdk::decode                   1336    1002      1985
  */
 fn main() {
     let encoded = vec![
@@ -76,7 +86,7 @@ fn main() {
 }
 
 fn baseline(_s: &String) -> Vec<u8> {
-    Vec::new()
+    vec![0]
 }
 
 fn base64_encode_config(s: &Vec<u8>) -> String {
@@ -113,14 +123,14 @@ fn run_benchmark<I: AsRef<[u8]>, O: AsRef<[u8]>>(name: &str, input: &I, f: fn(&I
     while SystemTime::now().duration_since(warmup_start).unwrap().as_secs() < 3 {
         for _ in 0..10_000 {
             let r = f(input);
-            assert!(r.as_ref().len() > 0);
+            assert!(r.as_ref().len() > 0, "name = {}, len = {}", name, r.as_ref().len());
         }
     }
 
     let start = SystemTime::now();
     for _ in 0..N {
         let r = f(input);
-        assert!(r.as_ref().len() > 0);
+        assert!(r.as_ref().len() > 0, "name = {}, len = {}", name, r.as_ref().len());
     }
     let end = SystemTime::now();
 
