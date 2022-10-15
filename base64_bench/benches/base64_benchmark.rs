@@ -31,6 +31,11 @@ pub fn bench_encode_diff(c: &mut Criterion) {
             &payload,
             |b, s| b.iter(|| crypto2_encode_config(&s)),
         );
+        group.bench_with_input(
+            BenchmarkId::new("jdk", size),
+            &payload,
+            |b, s| b.iter(|| jdk_encode(&s)),
+        );
     }
     group.finish();
 }
@@ -53,6 +58,11 @@ pub fn bench_decode_diff(c: &mut Criterion) {
             BenchmarkId::new("crypto2", td.size),
             &td.encoded,
             |b, s| b.iter(|| crypto2_decode_config(&s)),
+        );
+        group.bench_with_input(
+            BenchmarkId::new("jdk", td.size),
+            &td.encoded,
+            |b, s| b.iter(|| jdk_decode(&s)),
         );
     }
     group.finish();
