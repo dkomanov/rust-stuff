@@ -1,4 +1,5 @@
 language: rust
+dist: jammy
 rust:
   - stable
   - beta
