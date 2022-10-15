@@ -1,5 +1,3 @@
-cargo-features = ["test"]
-
 [workspace]
 
 members = [
