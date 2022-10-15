@@ -1,6 +1,8 @@
 language: rust
 dist: jammy
 rust:
+  - stable
+  - beta
   - nightly
 cache: cargo
 script:
