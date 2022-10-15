@@ -113,14 +113,14 @@ fn run_benchmark<I: AsRef<[u8]>, O: AsRef<[u8]>>(name: &str, input: &I, f: fn(&I
     while SystemTime::now().duration_since(warmup_start).unwrap().as_secs() < 3 {
         for _ in 0..10_000 {
             let r = f(input);
-            r.as_ref().len();
+            assert!(r.as_ref().len() > 0);
         }
     }
 
     let start = SystemTime::now();
     for _ in 0..N {
         let r = f(input);
-        r.as_ref().len();
+        assert!(r.as_ref().len() > 0);
     }
     let end = SystemTime::now();
 
