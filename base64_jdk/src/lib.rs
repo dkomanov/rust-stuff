@@ -1,14 +1,36 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+#![feature(test)]
+
+pub use crate::decode::{decode, decode_slice, DecodeError};
+pub use crate::encode::encode;
+
+#[derive(Clone, Copy, Debug)]
+pub struct Config {
+    pad: bool,
+    url_safe: bool,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub const STANDARD: Config = Config {
+    pad: true,
+    url_safe: false,
+};
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub const STANDARD_NO_PAD: Config = Config {
+    pad: false,
+    url_safe: false,
+};
+
+pub const URL_SAFE: Config = Config {
+    pad: true,
+    url_safe: false,
+};
+
+pub const URL_SAFE_NO_PAD: Config = Config {
+    pad: false,
+    url_safe: false,
+};
+
+const PAD_BYTE: u8 = b'=';
+
+mod encode;
+mod decode;
+mod tables;

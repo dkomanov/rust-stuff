@@ -7,6 +7,8 @@ use std::vec::Vec;
 
 use base64;
 
+use base64_jdk;
+
 pub static ENCODED_1: &str = "TWF1";
 pub static ENCODED_10: &str = "cmdWcTRWSGtmYUhx";
 pub static ENCODED_50: &str = "ZXBueFd1alQwRUZkaGk3bVNXOHhReThoZGRWd1ZQa2llSUxzVG9HakYxYnptbUFmUjlp";
@@ -68,6 +70,11 @@ pub fn crypto2_decode_config(s: &String) -> Vec<u8> {
 }
 
 #[inline]
+pub fn jdk_decode(s: &String) -> Vec<u8> {
+    base64_jdk::decode(s, base64_jdk::STANDARD_NO_PAD).unwrap()
+}
+
+#[inline]
 pub fn base64_encode_config(s: &Vec<u8>) -> String {
     base64::encode_config(s, base64::STANDARD_NO_PAD)
 }
@@ -77,16 +84,33 @@ pub fn crypto2_encode_config(s: &Vec<u8>) -> String {
     crypto2_base64::encode_with_config(s, crypto2_base64::DEFAULT_CONFIG)
 }
 
+#[inline]
+pub fn jdk_encode(s: &Vec<u8>) -> Vec<u8> {
+    base64_jdk::encode(s, base64_jdk::STANDARD_NO_PAD)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn produce_the_same_output() {
+    fn encode_successfully() {
+        for td in get_all_test_data() {
+            let input = td.encoded;
+            let payload = base64_decode_config(&input);
+            assert_eq!(base64_encode_config(&payload), input);
+            assert_eq!(crypto2_encode_config(&payload), input);
+            assert_eq!(String::from_utf8(jdk_encode(&payload)).unwrap(), input);
+        }
+    }
+
+    #[test]
+    fn decode_successfully() {
         for td in get_all_test_data() {
             let input = td.encoded;
             assert_eq!(base64_decode_config(&input), base64_decode_config_slice(&input));
             assert_eq!(base64_decode_config(&input), crypto2_decode_config(&input));
+            assert_eq!(base64_decode_config(&input), jdk_decode(&input));
         }
     }
 }

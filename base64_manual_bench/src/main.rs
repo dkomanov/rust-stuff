@@ -5,6 +5,7 @@ use std::vec::Vec;
 
 use base64;
 
+use base64_bench::{jdk_decode, jdk_encode};
 use crypto2_base64 as crypto2;
 
 /*
@@ -56,6 +57,9 @@ fn main() {
     for input in &payloads {
         run_benchmark::<Vec<u8>, String>("crypto2::encode_with_config", &input, crypto2_encode_config);
     }
+    for input in &payloads {
+        run_benchmark::<Vec<u8>, Vec<u8>>("jdk::encode                ", &input, jdk_encode);
+    }
 
     for input in &encoded {
         run_benchmark::<String, Vec<u8>>("base64::decode_config      ", &input, base64_decode_config);
@@ -65,6 +69,9 @@ fn main() {
     }
     for input in &encoded {
         run_benchmark::<String, Vec<u8>>("crypto2::decode_with_config", &input, crypto2_decode_config);
+    }
+    for input in &encoded {
+        run_benchmark::<String, Vec<u8>>("jdk::decode                ", &input, jdk_decode);
     }
 }
 

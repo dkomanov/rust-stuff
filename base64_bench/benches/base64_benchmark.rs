@@ -5,12 +5,14 @@ use base64_bench::*;
 pub fn bench_encode(c: &mut Criterion) {
     bench_encode_all_inputs(c, "base64_encode_config", |s| { base64_encode_config(s); });
     bench_encode_all_inputs(c, "crypto2_encode_config", |s| { crypto2_encode_config(s); });
+    bench_encode_all_inputs(c, "jdk_encode", |s| { jdk_encode(s); });
 }
 
 pub fn bench_decode(c: &mut Criterion) {
     bench_decode_all_inputs(c, "base64_decode_config_slice", |s| { base64_decode_config_slice(s); });
     bench_decode_all_inputs(c, "base64_decode_config", |s| { base64_decode_config(s); });
     bench_decode_all_inputs(c, "crypto2_decode_config", |s| { crypto2_decode_config(s); });
+    bench_decode_all_inputs(c, "jdk_decode", |s| { jdk_decode(s); });
 }
 
 pub fn bench_encode_diff(c: &mut Criterion) {
