@@ -150,7 +150,7 @@ mod tests {
         assert_eq!(calculate_output_length("".as_bytes()), Ok(0));
         assert_eq!(calculate_output_length("YQ==".as_bytes()), Ok(1));
         assert_eq!(calculate_output_length("YWJjZA==".as_bytes()), Ok(4));
-        assert_eq!(calculate_output_length("bm1t0YTRi9Cy0YvQsNGL0LLQv9Cy0YDQsNC/0L7Qv9GA0YDQu9C+".as_bytes()), Ok(35));
+        assert_eq!(calculate_output_length("bm1t0YTRi9Cy0YvQsNGL0LLQv9Cy0YDQsNC/0L7Qv9GA0YDQu9C+".as_bytes()), Ok(39));
     }
 
     #[test]
