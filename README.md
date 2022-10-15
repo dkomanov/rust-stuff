@@ -1,6 +1,6 @@
 # rust-stuff [![Build Status](https://app.travis-ci.com/dkomanov/rust-stuff.svg?branch=master)](https://app.travis-ci.com/dkomanov/rust-stuff)
 
-A repository with scripts/learning code/benchmarks for Rust.
+A repository with scripts/learning code/tests/benchmarks for Rust.
 
 ## Base64
 
