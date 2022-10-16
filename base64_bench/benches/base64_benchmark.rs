@@ -8,6 +8,7 @@ pub fn bench_encode(c: &mut Criterion) {
     bench_encode_all_inputs(c, "jdk_encode", |s| { jdk_encode(s); });
     bench_encode_all_inputs(c, "jdk_encode_measter", |s| { jdk_encode_measter(s); });
     bench_encode_all_inputs(c, "data_encoding_encode", |s| { data_encoding_encode(s); });
+    bench_encode_all_inputs(c, "base64_simd_encode_type", |s| { base64simd_encode_to_string(s); });
 }
 
 pub fn bench_decode(c: &mut Criterion) {
@@ -16,6 +17,7 @@ pub fn bench_decode(c: &mut Criterion) {
     bench_decode_all_inputs(c, "crypto2_decode_config", |s| { crypto2_decode_config(s); });
     bench_decode_all_inputs(c, "jdk_decode", |s| { jdk_decode(s); });
     bench_decode_all_inputs(c, "data_encoding_decode", |s| { data_encoding_decode(s.as_bytes()); });
+    bench_decode_all_inputs(c, "base64_simd_decode_type", |s| { base64simd_decode(s); });
 }
 
 pub fn bench_encode_diff(c: &mut Criterion) {
@@ -43,6 +45,11 @@ pub fn bench_encode_diff(c: &mut Criterion) {
             BenchmarkId::new("data_encoding", size),
             &payload,
             |b, s| b.iter(|| data_encoding_encode(&s)),
+        );
+        group.bench_with_input(
+            BenchmarkId::new("base64_simd", size),
+            &payload,
+            |b, s| b.iter(|| base64simd_encode_to_string(&s)),
         );
     }
     group.finish();
@@ -76,6 +83,11 @@ pub fn bench_decode_diff(c: &mut Criterion) {
             BenchmarkId::new("data_encoding", td.size),
             &td.encoded.clone().into_bytes(),
             |b, s| b.iter(|| data_encoding_decode(&s)),
+        );
+        group.bench_with_input(
+            BenchmarkId::new("base64_simd", td.size),
+            &td.encoded,
+            |b, s| b.iter(|| base64simd_decode(&s)),
         );
     }
     group.finish();
