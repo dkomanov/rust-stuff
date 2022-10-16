@@ -6,6 +6,7 @@ pub fn bench_encode(c: &mut Criterion) {
     bench_encode_all_inputs(c, "base64_encode_config", |s| { base64_encode_config(s); });
     bench_encode_all_inputs(c, "crypto2_encode_config", |s| { crypto2_encode_config(s); });
     bench_encode_all_inputs(c, "jdk_encode", |s| { jdk_encode(s); });
+    bench_encode_all_inputs(c, "jdk_encode_measter", |s| { jdk_encode_measter(s); });
     bench_encode_all_inputs(c, "data_encoding_encode", |s| { data_encoding_encode(s); });
 }
 

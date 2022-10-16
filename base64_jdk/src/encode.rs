@@ -57,6 +57,62 @@ pub fn encode<T: AsRef<[u8]>>(input: T, config: Config) -> Vec<u8> {
     buffer
 }
 
+pub fn encode_measter<T: AsRef<[u8]>>(input: T, config: Config) -> Vec<u8> {
+    let src = input.as_ref();
+    let mut buffer = match calculate_output_length(src, config) {
+        Some(len) => vec![0; len],
+        None => panic!("Encoded size is too large"),
+    };
+
+    let table = if config.url_safe {
+        TO_BASE64_URL_SAFE
+    } else {
+        TO_BASE64_STANDARD
+    };
+
+    let mut src_chunks = src.chunks_exact(3);
+    let mut buffer_chunks = buffer.chunks_exact_mut(4);
+    // ChunksExactMut pre-calculates the remainder, so we have to track how many chunks we consumed ourselves.
+    let mut chunks_taken = 0;
+
+    while let Some((src_chunk, buffer_chunk)) = src_chunks.next().zip(buffer_chunks.next()) {
+        let bits =
+            (src_chunk[0] as usize) << 16 | (src_chunk[1] as usize) << 8 | src_chunk[2] as usize;
+
+        buffer_chunk[0] = table[(bits >> 18) & 0x3f];
+        buffer_chunk[1] = table[(bits >> 12) & 0x3f];
+        buffer_chunk[2] = table[(bits >> 6) & 0x3f];
+        buffer_chunk[3] = table[(bits >> 0) & 0x3f];
+
+        chunks_taken += 1;
+    }
+
+    let src_remainder = src_chunks.remainder();
+    let buffer_remainder = &mut buffer[chunks_taken * 4..];
+    match src_remainder {
+        [] => {} // Nothing to do.
+        [b0] => {
+            buffer_remainder[0] = table[(*b0 as usize) >> 2];
+            buffer_remainder[1] = table[((*b0 as usize) << 4) & 0x3f];
+            if config.pad {
+                buffer_remainder[2] = PAD_BYTE;
+                buffer_remainder[3] = PAD_BYTE;
+            }
+        }
+        [b0, b1] => {
+            buffer_remainder[0] = table[(*b0 as usize) >> 2];
+            buffer_remainder[1] = table[((*b0 as usize) << 4) & 0x3f | ((*b1 as usize) >> 4)];
+            buffer_remainder[2] = table[((*b1 as usize) << 2) & 0x3f];
+            if config.pad {
+                buffer_remainder[3] = PAD_BYTE;
+            }
+        }
+        _ => unreachable!(),
+    }
+
+    buffer
+}
+
 fn calculate_output_length(input: &[u8], config: Config) -> Option<usize> {
     if config.pad {
         // ((len + 2) / 3) * 4
@@ -106,6 +162,8 @@ mod tests {
 
     fn assert_encode(expected: &str, input: &str, config: Config) {
         let encoded = encode(input, config);
+        let encoded_measter = encode(input, config);
         assert_eq!(expected.to_string(), String::from_utf8(encoded).unwrap());
+        assert_eq!(expected.to_string(), String::from_utf8(encoded_measter).unwrap());
     }
 }

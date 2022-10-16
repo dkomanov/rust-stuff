@@ -1,7 +1,7 @@
 #![feature(test)]
 
 pub use crate::decode::{decode, decode_slice, DecodeError};
-pub use crate::encode::encode;
+pub use crate::encode::{encode, encode_measter};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Config {

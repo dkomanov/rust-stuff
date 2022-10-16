@@ -110,6 +110,11 @@ pub fn jdk_encode(s: &Vec<u8>) -> Vec<u8> {
 }
 
 #[inline]
+pub fn jdk_encode_measter(s: &Vec<u8>) -> Vec<u8> {
+    base64_jdk::encode_measter(s, base64_jdk::STANDARD_NO_PAD)
+}
+
+#[inline]
 pub fn data_encoding_encode(s: &Vec<u8>) -> String {
     data_encoding::BASE64_NOPAD.encode(s)
 }
@@ -131,6 +136,7 @@ mod tests {
             assert_eq!(base64_encode_config(&payload), input);
             assert_eq!(crypto2_encode_config(&payload), input);
             assert_eq!(String::from_utf8(jdk_encode(&payload)).unwrap(), input);
+            assert_eq!(String::from_utf8(jdk_encode_measter(&payload)).unwrap(), input);
             assert_eq!(data_encoding_encode(&payload), input);
         }
     }
