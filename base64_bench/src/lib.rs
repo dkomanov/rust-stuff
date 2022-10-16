@@ -124,6 +124,20 @@ pub fn data_encoding_decode(s: &[u8]) -> Vec<u8> {
     data_encoding::BASE64_NOPAD.decode(s).unwrap()
 }
 
+pub fn base64simd_encode_to_vec(s: &Vec<u8>) -> Vec<u8> {
+    base64_simd::STANDARD_NO_PAD.encode_type(s)
+}
+
+#[inline]
+pub fn base64simd_encode_to_string(s: &Vec<u8>) -> String {
+    base64_simd::STANDARD_NO_PAD.encode_type(s)
+}
+
+#[inline]
+pub fn base64simd_decode(s: &String) -> Vec<u8> {
+    base64_simd::STANDARD_NO_PAD.decode_type(s.as_bytes()).unwrap()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -138,6 +152,7 @@ mod tests {
             assert_eq!(String::from_utf8(jdk_encode(&payload)).unwrap(), input);
             assert_eq!(String::from_utf8(jdk_encode_measter(&payload)).unwrap(), input);
             assert_eq!(data_encoding_encode(&payload), input);
+            assert_eq!(base64simd_encode_to_string(&payload), input);
         }
     }
 
@@ -149,6 +164,7 @@ mod tests {
             assert_eq!(base64_decode_config(&input), crypto2_decode_config(&input));
             assert_eq!(base64_decode_config(&input), jdk_decode(&input));
             assert_eq!(base64_decode_config(&input), data_encoding_decode(&input.as_bytes()));
+            assert_eq!(base64_decode_config(&input), base64simd_decode(&input));
         }
     }
 }

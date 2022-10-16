@@ -95,6 +95,9 @@ fn main() {
     for input in &payloads {
         run_benchmark::<Vec<u8>, String>("data_encoding::encode               ", &input, data_encoding_encode);
     }
+    for input in &payloads {
+        run_benchmark::<Vec<u8>, Vec<u8>>("base64_simd::Base64::encode_type    ", &input, base64simd_encode_to_vec);
+    }
 
     for input in &encoded {
         run_benchmark::<String, Vec<u8>>("base64::decode_config (excessive)   ", &input, base64_decode_config_buf_excessive_alloc);
@@ -116,6 +119,9 @@ fn main() {
     }
     for input in &encoded {
         run_benchmark::<String, Vec<u8>>("data_encoding::decode               ", &input, |s| data_encoding_decode(s.as_bytes()));
+    }
+    for input in &encoded {
+        run_benchmark::<String, Vec<u8>>("base64_simd::Base64::decode_type    ", &input, base64simd_decode);
     }
 }
 
