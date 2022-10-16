@@ -8,6 +8,7 @@ base64 = "0.13.0"
 data-encoding = "2.3.2"
 base64_jdk = { path = "../base64_jdk" }
 crypto2_base64 = { path = "../crypto2_base64" }
+base64-simd = { git = "https://github.com/Nugine/simd", rev = "4d6b948a921083e420b3465933b20dee9356cb78" }
 
 [dev-dependencies]
 criterion = "0.3.4"

@@ -26,10 +26,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "904dfeac50f3cdaba28fc6f57fdcddb75f49ed61346676a78c4ffe55877802fd"
 
 [[package]]
+name = "base64-simd"
+version = "0.8.0-dev"
+source = "git+https://github.com/Nugine/simd?rev=4d6b948a921083e420b3465933b20dee9356cb78#4d6b948a921083e420b3465933b20dee9356cb78"
+dependencies = [
+ "outref",
+ "vsimd",
+]
+
+[[package]]
 name = "base64_bench"
 version = "0.1.0"
 dependencies = [
  "base64",
+ "base64-simd",
  "base64_jdk",
  "criterion",
  "crypto2_base64",
@@ -327,6 +337,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0ab1bc2a289d34bd04a330323ac98a1b4bc82c9d9fcb1e66b63caa84da26b575"
 
 [[package]]
+name = "outref"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "61ad0f4c35dc77cbf74bc263d6354cb13a9c02dae3e057fdc7d56d2ddda76a93"
+
+[[package]]
 name = "plotters"
 version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -517,6 +533,11 @@ name = "unicode-width"
 version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c0edd1e5b14653f783770bce4a4dabb4a5108a5370a5f5d8cfe8710c361f6c8b"
+
+[[package]]
+name = "vsimd"
+version = "0.1.0-dev"
+source = "git+https://github.com/Nugine/simd?rev=4d6b948a921083e420b3465933b20dee9356cb78#4d6b948a921083e420b3465933b20dee9356cb78"
 
 [[package]]
 name = "walkdir"
