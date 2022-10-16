@@ -86,7 +86,7 @@ pub fn base64_decode_config_slice_memset(s: &String) -> Vec<u8> {
 
 #[inline]
 pub fn crypto2_decode_config(s: &String) -> Vec<u8> {
-    crypto2_base64::decode_with_config(s, crypto2_base64::DEFAULT_CONFIG).unwrap()
+    crypto2::encoding::base64::decode_with_config(s, crypto2::encoding::base64::DEFAULT_CONFIG).unwrap()
 }
 
 #[inline]
@@ -101,7 +101,7 @@ pub fn base64_encode_config(s: &Vec<u8>) -> String {
 
 #[inline]
 pub fn crypto2_encode_config(s: &Vec<u8>) -> String {
-    crypto2_base64::encode_with_config(s, crypto2_base64::DEFAULT_CONFIG)
+    crypto2::encoding::base64::encode_with_config(s, crypto2::encoding::base64::DEFAULT_CONFIG)
 }
 
 #[inline]

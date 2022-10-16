@@ -42,7 +42,7 @@ dependencies = [
  "base64-simd",
  "base64_jdk",
  "criterion",
- "crypto2_base64",
+ "crypto2",
  "data-encoding",
 ]
 
@@ -54,10 +54,7 @@ version = "0.1.0"
 name = "base64_manual_bench"
 version = "0.1.0"
 dependencies = [
- "base64",
  "base64_bench",
- "base64_jdk",
- "crypto2_base64",
 ]
 
 [[package]]
@@ -187,8 +184,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "crypto2_base64"
-version = "0.1.0"
+name = "crypto2"
+version = "0.2.0"
+source = "git+https://github.com/shadowsocks/crypto2?rev=f32eccf5ef588206017ee47c29614e727d8b1183#f32eccf5ef588206017ee47c29614e727d8b1183"
+dependencies = [
+ "cfg-if",
+]
 
 [[package]]
 name = "csv"
