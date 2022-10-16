@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 base64 = "0.13.0"
+data-encoding = "2.3.2"
 base64_jdk = { path = "../base64_jdk" }
 crypto2_base64 = { path = "../crypto2_base64" }
 

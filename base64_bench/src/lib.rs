@@ -6,6 +6,7 @@ use std::string::{String, ToString};
 use std::vec::Vec;
 
 use base64;
+use data_encoding;
 
 use base64_jdk;
 
@@ -108,6 +109,16 @@ pub fn jdk_encode(s: &Vec<u8>) -> Vec<u8> {
     base64_jdk::encode(s, base64_jdk::STANDARD_NO_PAD)
 }
 
+#[inline]
+pub fn data_encoding_encode(s: &Vec<u8>) -> String {
+    data_encoding::BASE64_NOPAD.encode(s)
+}
+
+#[inline]
+pub fn data_encoding_decode(s: &[u8]) -> Vec<u8> {
+    data_encoding::BASE64_NOPAD.decode(s).unwrap()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -120,6 +131,7 @@ mod tests {
             assert_eq!(base64_encode_config(&payload), input);
             assert_eq!(crypto2_encode_config(&payload), input);
             assert_eq!(String::from_utf8(jdk_encode(&payload)).unwrap(), input);
+            assert_eq!(data_encoding_encode(&payload), input);
         }
     }
 
@@ -130,6 +142,7 @@ mod tests {
             assert_eq!(base64_decode_config(&input), base64_decode_config_slice(&input));
             assert_eq!(base64_decode_config(&input), crypto2_decode_config(&input));
             assert_eq!(base64_decode_config(&input), jdk_decode(&input));
+            assert_eq!(base64_decode_config(&input), data_encoding_decode(&input.as_bytes()));
         }
     }
 }

@@ -33,6 +33,7 @@ dependencies = [
  "base64_jdk",
  "criterion",
  "crypto2_base64",
+ "data-encoding",
 ]
 
 [[package]]
@@ -200,6 +201,12 @@ checksum = "2b2466559f260f48ad25fe6317b3c8dac77b5bdb5763ac7d9d6103530663bc90"
 dependencies = [
  "memchr",
 ]
+
+[[package]]
+name = "data-encoding"
+version = "2.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3ee2393c4a91429dffb4bedf19f4d6abf27d8a732c8ce4980305d782e5426d57"
 
 [[package]]
 name = "either"

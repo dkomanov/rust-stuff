@@ -8,50 +8,65 @@ use base64_bench::*;
 /*
 method                                input  output  avg time
 base64::encode_config                    12      16        74
-base64::encode_config                    51      68       112
-base64::encode_config                   102     136       174
-base64::encode_config                   501     668       598
-base64::encode_config                  1002    1336      1045
-crypto2::encode_with_config              12      16        67
-crypto2::encode_with_config              51      68       146
-crypto2::encode_with_config             102     136       280
-crypto2::encode_with_config             501     668      1012
-crypto2::encode_with_config            1002    1336      1947
-jdk::encode                              12      16        71
+base64::encode_config                    51      68       107
+base64::encode_config                   102     136       171
+base64::encode_config                   501     668       568
+base64::encode_config                  1002    1336      1053
+crypto2::encode_with_config              12      16        66
+crypto2::encode_with_config              51      68       154
+crypto2::encode_with_config             102     136       266
+crypto2::encode_with_config             501     668      1004
+crypto2::encode_with_config            1002    1336      1934
+jdk::encode                              12      16        66
+jdk::encode                              51      68       139
+jdk::encode                             102     136       255
+jdk::encode                             501     668       965
+jdk::encode                            1002    1336      1861
+jdk::encode                              12      16        65
 jdk::encode                              51      68       144
-jdk::encode                             102     136       258
-jdk::encode                             501     668       979
-jdk::encode                            1002    1336      1876
+jdk::encode                             102     136       255
+jdk::encode                             501     668       963
+jdk::encode                            1002    1336      1859
+data_encoding::encode                    12      16        69
+data_encoding::encode                    51      68       104
+data_encoding::encode                   102     136       162
+data_encoding::encode                   501     668       506
+data_encoding::encode                  1002    1336       947
 base64::decode_config (excessive)        16      12        86
-base64::decode_config (excessive)        68      51       133
-base64::decode_config (excessive)       136     102       183
-base64::decode_config (excessive)       668     501       579
-base64::decode_config (excessive)      1336    1002      1134
-base64::decode_config_buf (no alloc)     16      12        93
-base64::decode_config_buf (no alloc)     68      51       136
-base64::decode_config_buf (no alloc)    136     102       191
-base64::decode_config_buf (no alloc)    668     501       588
-base64::decode_config_buf (no alloc)   1336    1002      1125
-base64::decode_config_slice (unsafe)     16      12        79
-base64::decode_config_slice (unsafe)     68      51       119
-base64::decode_config_slice (unsafe)    136     102       170
-base64::decode_config_slice (unsafe)    668     501       560
-base64::decode_config_slice (unsafe)   1336    1002      1061
-base64::decode_config_slice (safe)       16      12        93
-base64::decode_config_slice (safe)       68      51       133
-base64::decode_config_slice (safe)      136     102       183
-base64::decode_config_slice (safe)      668     501       588
-base64::decode_config_slice (safe)     1336    1002      1101
-crypto2::decode_with_config              16      12        91
-crypto2::decode_with_config              68      51       245
-crypto2::decode_with_config             136     102       436
-crypto2::decode_with_config             668     501      1973
-crypto2::decode_with_config            1336    1002      3944
-jdk::decode                              16      12        76
-jdk::decode                              68      51       149
-jdk::decode                             136     102       269
-jdk::decode                             668     501       994
-jdk::decode                            1336    1002      1961
+base64::decode_config (excessive)        68      51       122
+base64::decode_config (excessive)       136     102       170
+base64::decode_config (excessive)       668     501       577
+base64::decode_config (excessive)      1336    1002      1142
+base64::decode_config_buf (no alloc)     16      12        91
+base64::decode_config_buf (no alloc)     68      51       140
+base64::decode_config_buf (no alloc)    136     102       177
+base64::decode_config_buf (no alloc)    668     501       576
+base64::decode_config_buf (no alloc)   1336    1002      1092
+base64::decode_config_slice (unsafe)     16      12        78
+base64::decode_config_slice (unsafe)     68      51       114
+base64::decode_config_slice (unsafe)    136     102       164
+base64::decode_config_slice (unsafe)    668     501       571
+base64::decode_config_slice (unsafe)   1336    1002      1073
+base64::decode_config_slice (safe)       16      12        91
+base64::decode_config_slice (safe)       68      51       125
+base64::decode_config_slice (safe)      136     102       176
+base64::decode_config_slice (safe)      668     501       844
+base64::decode_config_slice (safe)     1336    1002      1104
+crypto2::decode_with_config              16      12        94
+crypto2::decode_with_config              68      51       243
+crypto2::decode_with_config             136     102       437
+crypto2::decode_with_config             668     501      2101
+crypto2::decode_with_config            1336    1002      4111
+jdk::decode                              16      12        77
+jdk::decode                              68      51       150
+jdk::decode                             136     102       279
+jdk::decode                             668     501      1045
+jdk::decode                            1336    1002      1975
+data_encoding::decode                    16      12        92
+data_encoding::decode                    68      51       157
+data_encoding::decode                   136     102       243
+data_encoding::decode                   668     501       930
+data_encoding::decode                  1336    1002      1734
  */
 fn main() {
     let encoded = vec![
@@ -74,6 +89,9 @@ fn main() {
     for input in &payloads {
         run_benchmark::<Vec<u8>, Vec<u8>>("jdk::encode                         ", &input, jdk_encode);
     }
+    for input in &payloads {
+        run_benchmark::<Vec<u8>, String>("data_encoding::encode               ", &input, data_encoding_encode);
+    }
 
     for input in &encoded {
         run_benchmark::<String, Vec<u8>>("base64::decode_config (excessive)   ", &input, base64_decode_config_buf_excessive_alloc);
@@ -92,6 +110,9 @@ fn main() {
     }
     for input in &encoded {
         run_benchmark::<String, Vec<u8>>("jdk::decode                         ", &input, jdk_decode);
+    }
+    for input in &encoded {
+        run_benchmark::<String, Vec<u8>>("data_encoding::decode               ", &input, |s| data_encoding_decode(s.as_bytes()));
     }
 }
 

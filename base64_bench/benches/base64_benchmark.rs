@@ -6,6 +6,7 @@ pub fn bench_encode(c: &mut Criterion) {
     bench_encode_all_inputs(c, "base64_encode_config", |s| { base64_encode_config(s); });
     bench_encode_all_inputs(c, "crypto2_encode_config", |s| { crypto2_encode_config(s); });
     bench_encode_all_inputs(c, "jdk_encode", |s| { jdk_encode(s); });
+    bench_encode_all_inputs(c, "data_encoding_encode", |s| { data_encoding_encode(s); });
 }
 
 pub fn bench_decode(c: &mut Criterion) {
@@ -13,6 +14,7 @@ pub fn bench_decode(c: &mut Criterion) {
     bench_decode_all_inputs(c, "base64_decode_config", |s| { base64_decode_config(s); });
     bench_decode_all_inputs(c, "crypto2_decode_config", |s| { crypto2_decode_config(s); });
     bench_decode_all_inputs(c, "jdk_decode", |s| { jdk_decode(s); });
+    bench_decode_all_inputs(c, "data_encoding_decode", |s| { data_encoding_decode(s.as_bytes()); });
 }
 
 pub fn bench_encode_diff(c: &mut Criterion) {
@@ -35,6 +37,11 @@ pub fn bench_encode_diff(c: &mut Criterion) {
             BenchmarkId::new("jdk", size),
             &payload,
             |b, s| b.iter(|| jdk_encode(&s)),
+        );
+        group.bench_with_input(
+            BenchmarkId::new("data_encoding", size),
+            &payload,
+            |b, s| b.iter(|| data_encoding_encode(&s)),
         );
     }
     group.finish();
@@ -63,6 +70,11 @@ pub fn bench_decode_diff(c: &mut Criterion) {
             BenchmarkId::new("jdk", td.size),
             &td.encoded,
             |b, s| b.iter(|| jdk_decode(&s)),
+        );
+        group.bench_with_input(
+            BenchmarkId::new("data_encoding", td.size),
+            &td.encoded.clone().into_bytes(),
+            |b, s| b.iter(|| data_encoding_decode(&s)),
         );
     }
     group.finish();
