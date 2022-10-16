@@ -3,49 +3,55 @@ use std::string::String;
 use std::time::SystemTime;
 use std::vec::Vec;
 
-use base64;
-
-use base64_bench::{jdk_decode, jdk_encode};
-use crypto2_base64 as crypto2;
+use base64_bench::*;
 
 /*
-method                       input  output  avg time
-baseline                         5       1        24
-base64::encode_config           12      16        76
-base64::encode_config           51      68       120
-base64::encode_config          102     136       184
-base64::encode_config          501     668       584
-base64::encode_config         1002    1336      1078
-crypto2::encode_with_config     12      16        67
-crypto2::encode_with_config     51      68       145
-crypto2::encode_with_config    102     136       274
-crypto2::encode_with_config    501     668      1101
-crypto2::encode_with_config   1002    1336      1977
-jdk::encode                     12      16        70
-jdk::encode                     51      68       138
-jdk::encode                    102     136       262
-jdk::encode                    501     668      1004
-jdk::encode                   1002    1336      1913
-base64::decode_config           16      12        85
-base64::decode_config           68      51       119
-base64::decode_config          136     102       174
-base64::decode_config          668     501       584
-base64::decode_config         1336    1002      1163
-base64::decode_config_slice     16      12        76
-base64::decode_config_slice     68      51       152
-base64::decode_config_slice    136     102       165
-base64::decode_config_slice    668     501       586
-base64::decode_config_slice   1336    1002      1075
-crypto2::decode_with_config     16      12        96
-crypto2::decode_with_config     68      51       239
-crypto2::decode_with_config    136     102       442
-crypto2::decode_with_config    668     501      1934
-crypto2::decode_with_config   1336    1002      4014
-jdk::decode                     16      12        75
-jdk::decode                     68      51       150
-jdk::decode                    136     102       254
-jdk::decode                    668     501      1007
-jdk::decode                   1336    1002      1985
+method                                input  output  avg time
+base64::encode_config                    12      16        74
+base64::encode_config                    51      68       112
+base64::encode_config                   102     136       174
+base64::encode_config                   501     668       598
+base64::encode_config                  1002    1336      1045
+crypto2::encode_with_config              12      16        67
+crypto2::encode_with_config              51      68       146
+crypto2::encode_with_config             102     136       280
+crypto2::encode_with_config             501     668      1012
+crypto2::encode_with_config            1002    1336      1947
+jdk::encode                              12      16        71
+jdk::encode                              51      68       144
+jdk::encode                             102     136       258
+jdk::encode                             501     668       979
+jdk::encode                            1002    1336      1876
+base64::decode_config (excessive)        16      12        86
+base64::decode_config (excessive)        68      51       133
+base64::decode_config (excessive)       136     102       183
+base64::decode_config (excessive)       668     501       579
+base64::decode_config (excessive)      1336    1002      1134
+base64::decode_config_buf (no alloc)     16      12        93
+base64::decode_config_buf (no alloc)     68      51       136
+base64::decode_config_buf (no alloc)    136     102       191
+base64::decode_config_buf (no alloc)    668     501       588
+base64::decode_config_buf (no alloc)   1336    1002      1125
+base64::decode_config_slice (unsafe)     16      12        79
+base64::decode_config_slice (unsafe)     68      51       119
+base64::decode_config_slice (unsafe)    136     102       170
+base64::decode_config_slice (unsafe)    668     501       560
+base64::decode_config_slice (unsafe)   1336    1002      1061
+base64::decode_config_slice (safe)       16      12        93
+base64::decode_config_slice (safe)       68      51       133
+base64::decode_config_slice (safe)      136     102       183
+base64::decode_config_slice (safe)      668     501       588
+base64::decode_config_slice (safe)     1336    1002      1101
+crypto2::decode_with_config              16      12        91
+crypto2::decode_with_config              68      51       245
+crypto2::decode_with_config             136     102       436
+crypto2::decode_with_config             668     501      1973
+crypto2::decode_with_config            1336    1002      3944
+jdk::decode                              16      12        76
+jdk::decode                              68      51       149
+jdk::decode                             136     102       269
+jdk::decode                             668     501       994
+jdk::decode                            1336    1002      1961
  */
 fn main() {
     let encoded = vec![
@@ -57,63 +63,36 @@ fn main() {
     ];
     let payloads: Vec<Vec<u8>> = encoded.iter().map(|s| base64::decode(s).unwrap()).collect();
 
-    std::println!("method                       input  output  avg time");
-
-    run_benchmark("baseline                   ", &"empty".to_string(), baseline);
+    std::println!("method                                input  output  avg time");
 
     for input in &payloads {
-        run_benchmark::<Vec<u8>, String>("base64::encode_config      ", &input, base64_encode_config);
+        run_benchmark::<Vec<u8>, String>("base64::encode_config               ", &input, base64_encode_config);
     }
     for input in &payloads {
-        run_benchmark::<Vec<u8>, String>("crypto2::encode_with_config", &input, crypto2_encode_config);
+        run_benchmark::<Vec<u8>, String>("crypto2::encode_with_config         ", &input, crypto2_encode_config);
     }
     for input in &payloads {
-        run_benchmark::<Vec<u8>, Vec<u8>>("jdk::encode                ", &input, jdk_encode);
+        run_benchmark::<Vec<u8>, Vec<u8>>("jdk::encode                         ", &input, jdk_encode);
     }
 
     for input in &encoded {
-        run_benchmark::<String, Vec<u8>>("base64::decode_config      ", &input, base64_decode_config);
+        run_benchmark::<String, Vec<u8>>("base64::decode_config (excessive)   ", &input, base64_decode_config_buf_excessive_alloc);
     }
     for input in &encoded {
-        run_benchmark::<String, Vec<u8>>("base64::decode_config_slice", &input, base64_decode_config_slice);
+        run_benchmark::<String, Vec<u8>>("base64::decode_config_buf (no alloc)", &input, base64_decode_config_buf_no_prealloc);
     }
     for input in &encoded {
-        run_benchmark::<String, Vec<u8>>("crypto2::decode_with_config", &input, crypto2_decode_config);
+        run_benchmark::<String, Vec<u8>>("base64::decode_config_slice (unsafe)", &input, base64_decode_config_slice);
     }
     for input in &encoded {
-        run_benchmark::<String, Vec<u8>>("jdk::decode                ", &input, jdk_decode);
+        run_benchmark::<String, Vec<u8>>("base64::decode_config_slice (safe)  ", &input, base64_decode_config_slice_memset);
     }
-}
-
-fn baseline(_s: &String) -> Vec<u8> {
-    vec![0]
-}
-
-fn base64_encode_config(s: &Vec<u8>) -> String {
-    base64::encode_config(s, base64::STANDARD_NO_PAD)
-}
-
-fn crypto2_encode_config(s: &Vec<u8>) -> String {
-    crypto2::encode_with_config(s, crypto2::DEFAULT_CONFIG)
-}
-
-fn base64_decode_config_slice(s: &String) -> Vec<u8> {
-    let mut buffer = Vec::<u8>::with_capacity(s.len() * 3 / 4);
-    unsafe {
-        let mut sl = std::slice::from_raw_parts_mut(buffer.as_mut_ptr(), buffer.capacity());
-        let size = base64::decode_config_slice(s, base64::STANDARD_NO_PAD, &mut sl).unwrap();
-        assert_eq!(size, buffer.capacity());
-        buffer.set_len(size);
+    for input in &encoded {
+        run_benchmark::<String, Vec<u8>>("crypto2::decode_with_config         ", &input, crypto2_decode_config);
     }
-    buffer
-}
-
-fn base64_decode_config(s: &String) -> Vec<u8> {
-    base64::decode_config(s, base64::STANDARD_NO_PAD).unwrap()
-}
-
-fn crypto2_decode_config(s: &String) -> Vec<u8> {
-    crypto2::decode_with_config(s, crypto2::DEFAULT_CONFIG).unwrap()
+    for input in &encoded {
+        run_benchmark::<String, Vec<u8>>("jdk::decode                         ", &input, jdk_decode);
+    }
 }
 
 fn run_benchmark<I: AsRef<[u8]>, O: AsRef<[u8]>>(name: &str, input: &I, f: fn(&I) -> O) {

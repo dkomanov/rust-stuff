@@ -48,20 +48,39 @@ pub fn get_all_test_data() -> Vec<TestData> {
 }
 
 #[inline]
+pub fn base64_decode_config(s: &String) -> Vec<u8> {
+    base64::decode_config(s, base64::STANDARD_NO_PAD).unwrap()
+}
+
+#[inline]
+pub fn base64_decode_config_buf_no_prealloc(s: &String) -> Vec<u8> {
+    let mut buffer = Vec::<u8>::new();
+    base64::decode_config_buf(s, base64::STANDARD_NO_PAD, &mut buffer).map(|_| buffer).unwrap()
+}
+
+#[inline]
+pub fn base64_decode_config_buf_excessive_alloc(s: &String) -> Vec<u8> {
+    let mut buffer = Vec::<u8>::with_capacity(s.len() * 4 / 3);
+    base64::decode_config_buf(s, base64::STANDARD_NO_PAD, &mut buffer).map(|_| buffer).unwrap()
+}
+
+#[inline]
 pub fn base64_decode_config_slice(s: &String) -> Vec<u8> {
-    let mut buffer = Vec::<u8>::with_capacity(s.len() * 3 / 4);
+    let mut buffer = Vec::<u8>::with_capacity((s.len() + 3) * 3 / 4);
     unsafe {
         let mut sl = std::slice::from_raw_parts_mut(buffer.as_mut_ptr(), buffer.capacity());
         let size = base64::decode_config_slice(s, base64::STANDARD_NO_PAD, &mut sl).unwrap();
-        assert_eq!(size, buffer.capacity());
         buffer.set_len(size);
     }
     buffer
 }
 
 #[inline]
-pub fn base64_decode_config(s: &String) -> Vec<u8> {
-    base64::decode_config(s, base64::STANDARD_NO_PAD).unwrap()
+pub fn base64_decode_config_slice_memset(s: &String) -> Vec<u8> {
+    let mut buffer = vec![0; (s.len() + 3) * 3 / 4];
+    let size = base64::decode_config_slice(s, base64::STANDARD_NO_PAD, &mut buffer).unwrap();
+    buffer.truncate(size);
+    buffer
 }
 
 #[inline]
