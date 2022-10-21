@@ -1,0 +1,12 @@
+[package]
+name = "base64_jni"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["dylib"]
+
+[dependencies]
+base64 = "0.13.0"
+base64-simd = { git = "https://github.com/Nugine/simd", rev = "4d6b948a921083e420b3465933b20dee9356cb78" }
+jni = "0.19.0"

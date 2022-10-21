@@ -9,6 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/base64_bench/benches" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/base64_bench/benches" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/base64_manual_bench/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/base64_jni/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/crypto2_base64/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
       <excludeFolder url="file://$MODULE_DIR$/base64_jdk/target" />
