@@ -5,12 +5,14 @@ use libc;
 
 /*
 $ cargo run -r --bin getloadavg_bench && uptime
-    Finished release [optimized] target(s) in 0.05s
+   Compiling getloadavg_bench v0.1.0 (/home/dkomanov/src/dkomanov/rust-stuff/getloadavg_bench)
+    Finished release [optimized] target(s) in 6.02s
      Running `target/release/getloadavg_bench`
-LA: 1.42 1.18 0.92
-getloadavg      469
-LA: 1.38 1.17 0.92
- 21:07:56 up 18 days, 11:49,  1 user,  load average: 1.38, 1.17, 0.92
+LA: 1.08 0.97 0.93
+Warmup is 6420000 iterations for ~3 seconds
+getloadavg      465
+LA: 1.07 0.97 0.93
+ 21:20:33 up 18 days, 12:01,  1 user,  load average: 1.07, 0.97, 0.93
  */
 fn main() {
     let mut output = vec![0.0; 3];
@@ -34,14 +36,18 @@ fn get_and_print() {
 }
 
 fn run_benchmark(output: *mut libc::c_double) {
-    static N: usize = 1_000_000;
+    static N: usize = 5_000_000;
+    static WARMUP_ITERATIONS: usize = 10_000;
 
     let warmup_start = SystemTime::now();
+    let mut warmup_iterations = 0;
     while SystemTime::now().duration_since(warmup_start).unwrap().as_secs() < 3 {
-        for _ in 0..10_000 {
+        for _ in 0..WARMUP_ITERATIONS {
             getloadavg(output);
         }
+        warmup_iterations += 1;
     }
+    std::println!("Warmup is {} iterations for ~3 seconds", warmup_iterations * WARMUP_ITERATIONS);
 
     let start = SystemTime::now();
     for _ in 0..N {
