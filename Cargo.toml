@@ -5,6 +5,7 @@ members = [
     "base64_jdk",
     "base64_jni",
     "base64_manual_bench",
+    "getloadavg_bench",
 ]
 
 [profile.dev]
