@@ -7,6 +7,8 @@ use jni::JNIEnv;
 use jni::objects::{JClass, ReleaseMode};
 use jni::sys::jbyteArray;
 
+mod nalim;
+
 /*
 ENCODE
  */
